@@ -320,7 +320,7 @@ export class Game {
       this.currentTarget = null;
     } else {
       const pen = this.scoring.miss();
-      this.hud.popup(pen.toString(), 'bad');
+      this.hud.popup(pen < 0 ? pen.toString() : 'MISS', 'bad');
     }
   }
 
@@ -381,7 +381,7 @@ export class Game {
       ) {
         if (this.hazardCooldown <= 0) {
           const pen = this.scoring.hazard();
-          this.hud.popup(pen.toString() + ' HAZARD', 'bad');
+          this.hud.popup(pen < 0 ? pen.toString() + ' HAZARD' : 'HAZARD', 'bad');
           this.effects.spawnSpray(new THREE.Vector3(pp.x, 0.6, pp.y), false);
           this.hazardCooldown = 1.2;
         }

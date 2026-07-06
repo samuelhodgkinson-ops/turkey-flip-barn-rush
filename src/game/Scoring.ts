@@ -67,8 +67,8 @@ export class Scoring {
   miss(): number {
     this.levelMissed += 1;
     this.totalMissed += 1;
-    this.levelScore += PENALTY_MISS;
-    this.totalScore += PENALTY_MISS;
+    this.levelScore = Math.max(0, this.levelScore + PENALTY_MISS);
+    this.totalScore = Math.max(0, this.totalScore + PENALTY_MISS);
     // A miss breaks the combo.
     this.combo = 1;
     this.comboTimer = 0;
@@ -76,8 +76,8 @@ export class Scoring {
   }
 
   hazard(): number {
-    this.levelScore += PENALTY_HAZARD;
-    this.totalScore += PENALTY_HAZARD;
+    this.levelScore = Math.max(0, this.levelScore + PENALTY_HAZARD);
+    this.totalScore = Math.max(0, this.totalScore + PENALTY_HAZARD);
     return PENALTY_HAZARD;
   }
 

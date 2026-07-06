@@ -343,7 +343,7 @@ export const LEVELS: LevelConfig[] = [
     barnDepth: 36,
     normalCount: 15,
     bronzeCount: 1,
-    targetScore: 18,
+    targetScore: 5,
     baseSpeed: 2.4,
     fleeSpeed: 4.2,
     evasiveness: 0.4,
@@ -363,7 +363,7 @@ export const LEVELS: LevelConfig[] = [
     barnDepth: 40,
     normalCount: 18,
     bronzeCount: 1,
-    targetScore: 22,
+    targetScore: 5,
     baseSpeed: 2.7,
     fleeSpeed: 4.6,
     evasiveness: 0.5,
@@ -383,7 +383,7 @@ export const LEVELS: LevelConfig[] = [
     barnDepth: 50,
     normalCount: 22,
     bronzeCount: 2,
-    targetScore: 28,
+    targetScore: 5,
     baseSpeed: 3.0,
     fleeSpeed: 5.1,
     evasiveness: 0.6,
@@ -403,7 +403,7 @@ export const LEVELS: LevelConfig[] = [
     barnDepth: 48,
     normalCount: 24,
     bronzeCount: 2,
-    targetScore: 32,
+    targetScore: 5,
     baseSpeed: 3.2,
     fleeSpeed: 5.4,
     evasiveness: 0.7,
@@ -423,7 +423,7 @@ export const LEVELS: LevelConfig[] = [
     barnDepth: 52,
     normalCount: 28,
     bronzeCount: 2,
-    targetScore: 36,
+    targetScore: 5,
     baseSpeed: 3.5,
     fleeSpeed: 5.8,
     evasiveness: 0.82,
@@ -443,7 +443,7 @@ export const LEVELS: LevelConfig[] = [
     barnDepth: 46,
     normalCount: 20,
     bronzeCount: 2,
-    targetScore: 32,
+    targetScore: 5,
     baseSpeed: 3.0,
     fleeSpeed: 5.0,
     evasiveness: 0.7,
@@ -463,7 +463,7 @@ export const LEVELS: LevelConfig[] = [
     barnDepth: 54,
     normalCount: 26,
     bronzeCount: 3,
-    targetScore: 42,
+    targetScore: 5,
     baseSpeed: 3.6,
     fleeSpeed: 6.1,
     evasiveness: 0.9,
@@ -479,7 +479,7 @@ export const SCORE_NORMAL = 1;
 export const SCORE_BRONZE = 5;
 export const COMBO_WINDOW = 4; // seconds
 export const COMBO_MAX = 5;
-export const PENALTY_MISS = -1;
-export const PENALTY_HAZARD = -2;
+export const PENALTY_MISS = 0; // no negative scoring
+export const PENALTY_HAZARD = 0; // no negative scoring
 
 export const FLIP_RANGE = 3.6; // how close to flip (generous, easier to land)
