@@ -66,7 +66,7 @@ export class HUD {
 
     this.prompt = document.createElement('div');
     this.prompt.id = 'prompt';
-    this.prompt.textContent = 'Left-click to Flip';
+    this.prompt.textContent = 'Left-click or E to Flip';
     this.prompt.style.display = 'none';
     this.root.appendChild(this.prompt);
 
@@ -107,7 +107,7 @@ export class HUD {
   }
 
   setFlipVerb(verb: string): void {
-    this.prompt.textContent = `Left-click to ${verb}`;
+    this.prompt.textContent = `Left-click or E to ${verb}`;
   }
 
   update(s: HudState): void {
@@ -153,7 +153,7 @@ export class HUD {
       hens, chickens, salmon, shrimp, pigs and... office staff.</p>
       <div class="instructions">
         <div><kbd>↑</kbd> Forward &nbsp; <kbd>↓</kbd> Back &nbsp; <kbd>←</kbd><kbd>→</kbd> Strafe &nbsp;(or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>) &nbsp; · &nbsp; <kbd>Mouse</kbd> Look</div>
-        <div><kbd>Left-click</kbd> Flip when in range &nbsp; · &nbsp; <kbd>Shift</kbd> Sprint</div>
+        <div><kbd>Left-click</kbd> or <kbd>E</kbd> Flip when in range &nbsp; · &nbsp; <kbd>Shift</kbd> Sprint</div>
         <div><kbd>Click</kbd> Lock mouse &nbsp; · &nbsp; <kbd>Esc</kbd> Release</div>
         <div class="hint">Build combos by flipping fast (up to 5×). Hunt the rare
         <b class="bronze">Golden</b> critters for 5 points. Score carries across all
