@@ -23,6 +23,19 @@ export class PlayerController {
   private domElement: HTMLElement;
   private mouseSensitivity = 0.0022;
 
+  // Touch controls: virtual joystick axes (x=strafe, z=forward) + look sens.
+  touchInput = { x: 0, z: 0 };
+  touchSensitivity = 0.005;
+  touchMode = false;
+
+  // Applies a look delta from a touch drag (pixels).
+  applyLook(dx: number, dy: number): void {
+    this.yaw -= dx * this.touchSensitivity;
+    this.pitch -= dy * this.touchSensitivity;
+    const lim = Math.PI / 2 - 0.05;
+    this.pitch = Math.max(-lim, Math.min(lim, this.pitch));
+  }
+
   constructor(camera: THREE.PerspectiveCamera, domElement: HTMLElement) {
     this.camera = camera;
     this.domElement = domElement;
@@ -97,6 +110,9 @@ export class PlayerController {
     if (this.keys['ArrowDown']) iz += 1;
     if (this.keys['KeyA'] || this.keys['ArrowLeft']) ix -= 1;
     if (this.keys['KeyD'] || this.keys['ArrowRight']) ix += 1;
+    // add virtual-joystick input (touch)
+    ix += this.touchInput.x;
+    iz += this.touchInput.z;
     this.sprinting = !!(this.keys['ShiftLeft'] || this.keys['ShiftRight']);
 
     const sin = Math.sin(this.yaw);

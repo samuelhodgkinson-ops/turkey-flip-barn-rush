@@ -40,10 +40,17 @@ export class HUD {
   private fActive!: HTMLElement;
   private fActiveLabel!: HTMLElement;
   private fMissed!: HTMLElement;
+  private mobile = false;
 
   constructor(root: HTMLElement) {
     this.root = root;
     this.build();
+  }
+
+  setMobile(v: boolean): void {
+    this.mobile = v;
+    this.prompt.textContent = v ? 'Tap FLIP' : 'Left-click or E to Flip';
+    if (v) document.body.classList.add('touch');
   }
 
   private build(): void {
@@ -107,7 +114,9 @@ export class HUD {
   }
 
   setFlipVerb(verb: string): void {
-    this.prompt.textContent = `Left-click or E to ${verb}`;
+    this.prompt.textContent = this.mobile
+      ? `Tap FLIP`
+      : `Left-click or E to ${verb}`;
   }
 
   update(s: HudState): void {
@@ -152,9 +161,11 @@ export class HUD {
       <p class="tag">Flip as many critters as you can across 7 wild levels — turkeys,
       hens, chickens, salmon, shrimp, pigs and... office staff.</p>
       <div class="instructions">
-        <div><kbd>↑</kbd> Back &nbsp; <kbd>↓</kbd> Forward &nbsp; <kbd>←</kbd><kbd>→</kbd> Strafe &nbsp;(or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>) &nbsp; · &nbsp; <kbd>Mouse</kbd> Look</div>
-        <div><kbd>Left-click</kbd> or <kbd>E</kbd> Flip when in range &nbsp; · &nbsp; <kbd>Shift</kbd> Sprint</div>
-        <div><kbd>Click</kbd> Lock mouse &nbsp; · &nbsp; <kbd>Esc</kbd> Release</div>
+        <div class="desktop-only"><kbd>↑</kbd> Back &nbsp; <kbd>↓</kbd> Forward &nbsp; <kbd>←</kbd><kbd>→</kbd> Strafe &nbsp;(or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>) &nbsp; · &nbsp; <kbd>Mouse</kbd> Look</div>
+        <div class="desktop-only"><kbd>Left-click</kbd> or <kbd>E</kbd> Flip when in range &nbsp; · &nbsp; <kbd>Shift</kbd> Sprint</div>
+        <div class="desktop-only"><kbd>Click</kbd> Lock mouse &nbsp; · &nbsp; <kbd>Esc</kbd> Release</div>
+        <div class="touch-only">📱 <b>Left stick</b> to move &nbsp; · &nbsp; <b>Drag</b> the screen to look</div>
+        <div class="touch-only"><b>FLIP</b> button (bottom-right) to flip when in range</div>
         <div class="hint">Build combos by flipping fast (up to 5×). Hunt the rare
         <b class="bronze">Golden</b> critters for 5 points. Score carries across all
         levels — top the <b>leaderboard</b> at the end. Mind mud, gates and machinery.</div>

@@ -14,6 +14,7 @@ import { Scoring } from './Scoring';
 import { Effects } from './Effects';
 import { HUD } from './HUD';
 import { Leaderboard } from './Leaderboard';
+import { MobileControls } from './MobileControls';
 
 type State =
   | 'start'
@@ -37,6 +38,10 @@ export class Game {
   private effects: Effects;
   private hud: HUD;
   private player: PlayerController;
+  private mobile!: MobileControls;
+  private isTouch =
+    typeof window !== 'undefined' &&
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
   private hemiLight!: THREE.HemisphereLight;
   private dirLight!: THREE.DirectionalLight;
@@ -75,6 +80,11 @@ export class Game {
     this.effects = new Effects(this.scene);
     this.hud = new HUD(root);
     this.player = new PlayerController(this.camera, this.renderer.domElement);
+    this.player.touchMode = this.isTouch;
+    this.hud.setMobile(this.isTouch);
+    this.mobile = new MobileControls(root, this.player, () => {
+      if (this.state === 'playing') this.tryFlip();
+    });
 
     this.bindInput();
     window.addEventListener('resize', () => this.onResize());
@@ -111,6 +121,7 @@ export class Game {
   private bindInput(): void {
     this.renderer.domElement.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return; // left button only
+      if (this.isTouch) return; // touch uses on-screen controls
       if (this.state === 'playing' && this.player.enabled) {
         // locked & playing -> left click flips
         this.tryFlip();
@@ -162,7 +173,12 @@ export class Game {
     this.timeLeft = LEVEL_DURATION;
     this.scoring.startLevel();
     this.hud.setHudVisible(true);
-    this.player.requestLock();
+    if (this.isTouch) {
+      // no pointer lock on touch devices — use on-screen controls
+      this.mobile.setActive(true);
+    } else {
+      this.player.requestLock();
+    }
   }
 
   private buildLevel(level: LevelConfig): void {
@@ -217,6 +233,7 @@ export class Game {
 
   private endLevel(): void {
     this.player.releaseLock();
+    this.mobile.setActive(false);
     const level = LEVELS[this.levelIndex];
     const reached = this.scoring.levelScore >= level.targetScore;
     if (reached) {
@@ -263,6 +280,7 @@ export class Game {
   private showFinal(won: boolean): void {
     this.state = 'final';
     this.player.releaseLock();
+    this.mobile.setActive(false);
     this.teardownLevel();
     this.hud.setHudVisible(false);
     this.hud.showFinal(

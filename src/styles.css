@@ -485,3 +485,87 @@ button.secondary {
   font-size: 14px;
   padding: 8px;
 }
+
+/* ---------- touch / desktop instruction visibility ---------- */
+.touch-only {
+  display: none;
+}
+body.touch .touch-only {
+  display: block;
+}
+body.touch .desktop-only {
+  display: none;
+}
+body.touch {
+  touch-action: none;
+}
+
+/* ---------- mobile on-screen controls ---------- */
+#m-look {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  display: none;
+  touch-action: none;
+}
+
+#m-stick {
+  position: fixed;
+  left: 22px;
+  bottom: 22px;
+  width: 130px;
+  height: 130px;
+  z-index: 22;
+  display: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.28);
+  border: 2px solid rgba(255, 204, 51, 0.5);
+  touch-action: none;
+}
+
+#m-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--amber-bright), var(--amber));
+  border: 2px solid #b8860b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+#m-flip {
+  position: fixed;
+  right: 26px;
+  bottom: 40px;
+  width: 104px;
+  height: 104px;
+  z-index: 22;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #1a1206;
+  background: radial-gradient(circle, #ff7a5c, var(--red));
+  border: 3px solid #fff;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+#m-flip.pressed {
+  transform: scale(0.9);
+  filter: brightness(1.2);
+}
+
+/* flip button uses flex when shown on touch */
+body.touch #m-flip {
+  display: flex;
+}
