@@ -152,7 +152,7 @@ export class HUD {
       <p class="tag">Flip as many critters as you can across 7 wild levels — turkeys,
       hens, chickens, salmon, shrimp, pigs and... office staff.</p>
       <div class="instructions">
-        <div><kbd>↑</kbd> Forward &nbsp; <kbd>↓</kbd> Back &nbsp; <kbd>←</kbd><kbd>→</kbd> Strafe &nbsp;(or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>) &nbsp; · &nbsp; <kbd>Mouse</kbd> Look</div>
+        <div><kbd>↑</kbd> Back &nbsp; <kbd>↓</kbd> Forward &nbsp; <kbd>←</kbd><kbd>→</kbd> Strafe &nbsp;(or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>) &nbsp; · &nbsp; <kbd>Mouse</kbd> Look</div>
         <div><kbd>Left-click</kbd> or <kbd>E</kbd> Flip when in range &nbsp; · &nbsp; <kbd>Shift</kbd> Sprint</div>
         <div><kbd>Click</kbd> Lock mouse &nbsp; · &nbsp; <kbd>Esc</kbd> Release</div>
         <div class="hint">Build combos by flipping fast (up to 5×). Hunt the rare

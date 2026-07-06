@@ -482,4 +482,4 @@ export const COMBO_MAX = 5;
 export const PENALTY_MISS = -1;
 export const PENALTY_HAZARD = -2;
 
-export const FLIP_RANGE = 2.6; // how close to flip
+export const FLIP_RANGE = 3.6; // how close to flip (generous, easier to land)

@@ -18,7 +18,8 @@ export class TurkeyAI {
     level: LevelConfig,
     dt: number
   ): void {
-    const fleeRadius = 6 + level.evasiveness * 5;
+    // Smaller flee radius => creatures hold their ground longer, easier to chase.
+    const fleeRadius = 4 + level.evasiveness * 3;
 
     for (let i = 0; i < turkeys.length; i++) {
       const t = turkeys[i];

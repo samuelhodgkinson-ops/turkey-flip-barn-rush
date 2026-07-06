@@ -319,7 +319,7 @@ export class Game {
       const dist = Math.hypot(dx, dz);
       if (dist > FLIP_RANGE) continue;
       const dot = (dx / (dist || 1)) * fwd.x + (dz / (dist || 1)) * fwd.y;
-      if (dot < 0.1) continue; // must be roughly in front
+      if (dot < -0.35) continue; // only exclude targets well behind you
       // prefer closer + more centered
       const score = dot * 2 - dist;
       if (score > bestScore) {

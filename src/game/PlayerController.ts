@@ -3,8 +3,8 @@ import { ObstacleSpec } from './levels';
 
 const PLAYER_RADIUS = 0.45;
 const EYE_HEIGHT = 1.7;
-const WALK_SPEED = 6.5;
-const SPRINT_SPEED = 10.5;
+const WALK_SPEED = 7.6;
+const SPRINT_SPEED = 12.0;
 const MUD_FACTOR = 0.45;
 const ACCEL = 60;
 const FRICTION = 12;
@@ -90,8 +90,11 @@ export class PlayerController {
     // ---- desired movement direction in local space ----
     let ix = 0;
     let iz = 0;
-    if (this.keys['KeyW'] || this.keys['ArrowUp']) iz += 1;
-    if (this.keys['KeyS'] || this.keys['ArrowDown']) iz -= 1;
+    if (this.keys['KeyW']) iz += 1;
+    if (this.keys['KeyS']) iz -= 1;
+    // Arrow up/down are swapped per request: Up = back, Down = forward.
+    if (this.keys['ArrowUp']) iz -= 1;
+    if (this.keys['ArrowDown']) iz += 1;
     if (this.keys['KeyA'] || this.keys['ArrowLeft']) ix -= 1;
     if (this.keys['KeyD'] || this.keys['ArrowRight']) ix += 1;
     this.sprinting = !!(this.keys['ShiftLeft'] || this.keys['ShiftRight']);
