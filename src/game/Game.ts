@@ -1,5 +1,11 @@
 import * as THREE from 'three';
-import { LEVELS, LEVEL_DURATION, FLIP_RANGE, LevelConfig } from './levels';
+import {
+  LEVELS,
+  LEVEL_DURATION,
+  FLIP_RANGE,
+  LevelConfig,
+  ThemeStyle,
+} from './levels';
 import { LevelManager, World } from './LevelManager';
 import { PlayerController } from './PlayerController';
 import { Turkey } from './Turkey';
@@ -7,6 +13,7 @@ import { TurkeyAI } from './TurkeyAI';
 import { Scoring } from './Scoring';
 import { Effects } from './Effects';
 import { HUD } from './HUD';
+import { Leaderboard } from './Leaderboard';
 
 type State =
   | 'start'
@@ -26,9 +33,14 @@ export class Game {
   private levelManager = new LevelManager();
   private ai = new TurkeyAI();
   private scoring = new Scoring();
+  private leaderboard = new Leaderboard();
   private effects: Effects;
   private hud: HUD;
   private player: PlayerController;
+
+  private hemiLight!: THREE.HemisphereLight;
+  private dirLight!: THREE.DirectionalLight;
+  private ambLight!: THREE.AmbientLight;
 
   private world: World | null = null;
   private worldGroup: THREE.Group | null = null;
@@ -75,25 +87,42 @@ export class Game {
   }
 
   private setupLights(): void {
-    const hemi = new THREE.HemisphereLight(0xfff0d0, 0x402a18, 0.9);
-    this.scene.add(hemi);
-    const dir = new THREE.DirectionalLight(0xffe6b0, 0.7);
-    dir.position.set(20, 40, 10);
-    this.scene.add(dir);
-    const amb = new THREE.AmbientLight(0xffffff, 0.25);
-    this.scene.add(amb);
+    this.hemiLight = new THREE.HemisphereLight(0xfff0d0, 0x402a18, 0.9);
+    this.scene.add(this.hemiLight);
+    this.dirLight = new THREE.DirectionalLight(0xffe6b0, 0.7);
+    this.dirLight.position.set(20, 40, 10);
+    this.scene.add(this.dirLight);
+    this.ambLight = new THREE.AmbientLight(0xffffff, 0.25);
+    this.scene.add(this.ambLight);
+  }
+
+  private applyTheme(theme: ThemeStyle): void {
+    this.scene.background = new THREE.Color(theme.bg);
+    this.scene.fog = new THREE.Fog(theme.fogColor, theme.fogNear, theme.fogFar);
+    this.hemiLight.color.setHex(theme.hemiSky);
+    this.hemiLight.groundColor.setHex(theme.hemiGround);
+    this.hemiLight.intensity = theme.hemiInt;
+    this.dirLight.color.setHex(theme.dirColor);
+    this.dirLight.intensity = theme.dirInt;
+    this.ambLight.intensity = theme.ambInt;
   }
 
   // ---------------- input ----------------
   private bindInput(): void {
-    this.renderer.domElement.addEventListener('click', () => {
-      if (this.state === 'playing' || this.state === 'paused') {
+    this.renderer.domElement.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return; // left button only
+      if (this.state === 'playing' && this.player.enabled) {
+        // locked & playing -> left click flips
+        this.tryFlip();
+      } else if (this.state === 'playing' || this.state === 'paused') {
+        // not locked yet -> first click (re)acquires pointer lock
         this.player.requestLock();
       }
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.repeat) return;
+      // E also flips (keyboard alternative to left click)
       if (e.code === 'KeyE' && this.state === 'playing' && this.player.enabled) {
         this.tryFlip();
       }
@@ -120,6 +149,8 @@ export class Game {
     this.state = 'intro';
     const level = LEVELS[this.levelIndex];
     this.buildLevel(level);
+    this.hud.setCritterLabel(level.critterLabel);
+    this.hud.setFlipVerb(level.flipVerb);
     this.hud.showLevelIntro(level, () => {
       this.hud.hideOverlay();
       this.beginPlay();
@@ -140,25 +171,27 @@ export class Game {
     this.world = world;
     this.worldGroup = world.group;
     this.scene.add(world.group);
+    this.applyTheme(world.theme);
 
-    // spawn turkeys
+    // spawn critters
     this.turkeys = [];
     const pts = world.spawnPoints.slice();
     this.shuffle(pts);
-    const total = level.normalTurkeys + level.bronzeTurkeys;
+    const total = level.normalCount + level.bronzeCount;
     let flock = 0;
     for (let i = 0; i < total; i++) {
-      const isBronze = i >= level.normalTurkeys;
+      const isBronze = i >= level.normalCount;
       const p = pts[i % pts.length];
       const jx = p.x + (Math.random() - 0.5) * 2;
       const jz = p.y + (Math.random() - 0.5) * 2;
-      if (i % 4 === 0) flock++; // ~4 turkeys per flock
+      if (i % 4 === 0) flock++; // ~4 critters per flock
       const t = new Turkey(
         jx,
         jz,
         isBronze,
-        level.turkeyBaseSpeed,
-        level.turkeyFleeSpeed,
+        level.species,
+        level.baseSpeed,
+        level.fleeSpeed,
         flock
       );
       this.turkeys.push(t);
@@ -235,13 +268,15 @@ export class Game {
     this.hud.showFinal(
       {
         totalScore: this.scoring.totalScore,
-        turkeys: this.scoring.totalTurkeys,
-        bronze: this.scoring.totalBronze,
+        flipped: this.scoring.totalTurkeys,
+        golden: this.scoring.totalBronze,
         missed: this.scoring.totalMissed,
         bestCombo: this.scoring.bestCombo,
         grade: this.scoring.grade(),
         won,
+        levelsCleared: won ? LEVELS.length : this.levelIndex,
       },
+      this.leaderboard,
       () => {
         this.hud.hideOverlay();
         this.startGame();
@@ -256,11 +291,11 @@ export class Game {
       t.flip();
       const pts = this.scoring.flip(t.isBronze);
       this.effects.spawnSpray(
-        new THREE.Vector3(t.pos.x, 0.6, t.pos.y),
+        new THREE.Vector3(t.pos.x, t.hoverY + 0.6, t.pos.y),
         t.isBronze
       );
       this.hud.popup(
-        (t.isBronze ? 'BRONZE! ' : '') + '+' + pts +
+        (t.isBronze ? 'GOLDEN! ' : '') + '+' + pts +
           (this.scoring.combo > 1 ? ` (x${this.scoring.combo})` : ''),
         t.isBronze ? 'bronze' : 'good'
       );

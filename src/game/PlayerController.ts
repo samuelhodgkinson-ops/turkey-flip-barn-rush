@@ -32,6 +32,13 @@ export class PlayerController {
   private bindEvents(): void {
     document.addEventListener('keydown', (e) => {
       this.keys[e.code] = true;
+      // stop arrow keys / space from scrolling the page during play
+      if (
+        this.enabled &&
+        (e.code.startsWith('Arrow') || e.code === 'Space')
+      ) {
+        e.preventDefault();
+      }
     });
     document.addEventListener('keyup', (e) => {
       this.keys[e.code] = false;
@@ -83,10 +90,10 @@ export class PlayerController {
     // ---- desired movement direction in local space ----
     let ix = 0;
     let iz = 0;
-    if (this.keys['KeyW']) iz += 1;
-    if (this.keys['KeyS']) iz -= 1;
-    if (this.keys['KeyA']) ix -= 1;
-    if (this.keys['KeyD']) ix += 1;
+    if (this.keys['KeyW'] || this.keys['ArrowUp']) iz += 1;
+    if (this.keys['KeyS'] || this.keys['ArrowDown']) iz -= 1;
+    if (this.keys['KeyA'] || this.keys['ArrowLeft']) ix -= 1;
+    if (this.keys['KeyD'] || this.keys['ArrowRight']) ix += 1;
     this.sprinting = !!(this.keys['ShiftLeft'] || this.keys['ShiftRight']);
 
     const sin = Math.sin(this.yaw);
